@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.moxi.dao.TomcatlogDao">
-	<resultMap id="BaseResultMap" type="com.moxi.model.Tomcatlog">
+<mapper namespace="com.monitor.dao.TomcatlogDao">
+	<resultMap id="BaseResultMap" type="com.monitor.model.Tomcatlog">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="name" jdbcType="VARCHAR" property="name" />
 	</resultMap>
 
-	<select id="testget" resultType="com.moxi.model.Tomcatlog">
+	<select id="testget" resultType="com.monitor.model.Tomcatlog">
 		select
 		*
-		from t_app_tomcatlog
+		from t_app_tomcatlog 
 		limit 10
 	</select>
 
