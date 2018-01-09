@@ -43,10 +43,11 @@ public class Task {
 			SimpleDateFormat sfDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
 			String date1 = sfDateFormat1.format(new Date());
 			String readfilepath = logfilepath+"/localhost_access_log." + date1 + ".txt";
-	
+	logger.info("get readfilepath is "+readfilepath);
 			SimpleDateFormat sfDateFormat2 = new SimpleDateFormat("yyyyMMddhhmmss");
 			String date2 = sfDateFormat1.format(new Date());
 			String writefilepath = targetfilepath+"/accesslog." + date1 + ".txt";
+			logger.info("get writefilepath is "+writefilepath);
 		int totallines = 0;
 		try {
 			totallines = IoUtil.countLines(readfilepath);
@@ -66,10 +67,10 @@ public class Task {
 			logger.info("get lines is "+ lines);
 			logger.info("get logfilepath is "+ logfilepath);
 			logger.info("get targetfilepath is "+ targetfilepath);
-//			long time = tomcatlogService.copytomcatloglastline(readfilepath, writefilepath, lines);
-//			Thread.sleep(2000);
-//			tomcatlogService.copylog(writefilepath);
-//			logger.info("转存日志耗时" + time);
+			long time = tomcatlogService.copytomcatloglastline(readfilepath, writefilepath, lines);
+			Thread.sleep(2000);
+			tomcatlogService.copylog(writefilepath);
+			logger.info("转存日志耗时" + time);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("转存异常");
