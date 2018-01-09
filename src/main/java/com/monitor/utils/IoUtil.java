@@ -3,27 +3,28 @@ package com.monitor.utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import org.apache.commons.io.input.ReversedLinesFileReader;
-
-
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IoUtil {
+	private static final Logger logger = LoggerFactory.getLogger(IoUtil.class);
+
+	/*
+	 * 将整个日志文件转格式存到新文档并写入数据库
+	 */
 	public static void conversionFile(String readfilepath, String writefilepath) {
 		BufferedReader reader = null;
 		BufferedWriter writer = null;
-		long linenum =0;
+		long linenum = 0;
 		try {
 			File file = new File(writefilepath);
 			if (!file.exists()) {
@@ -31,8 +32,6 @@ public class IoUtil {
 			}
 			StringBuffer sb = new StringBuffer();
 			reader = new BufferedReader(new FileReader(readfilepath));
-			//ReversedLinesFileReader object = new ReversedLinesFileReader(file,4096,"UTF-8");
-			
 			String line = null;
 			// 按行读取
 			while ((line = reader.readLine()) != null) {
@@ -52,15 +51,16 @@ public class IoUtil {
 				SimpleDateFormat sdfnew = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				try {
 					calldate = sdf.parse(calldatestring);
-					// 转换得到
+					// 转换得到yyyy-MM-dd HH:mm:ss格式的请求时间
 					newdatestr = sdfnew.format(calldate);
 
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				// 获取第一个数字，并加1
+					logger.error("ioutil日期转换出错");
 
+				}
+				// 将各字符串以分号;连接,最后加上换行符
 				sb.append(strings[0]).append(";").append(strings[1]).append(";").append(strings[2]).append(";")
 						.append("\"").append(newdatestr).append("\"").append(";").append(strings[4]).append("\r\n");
 				linenum++;
@@ -70,6 +70,7 @@ public class IoUtil {
 			writer.write(sb.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.error("读取tomcat日志出错");
 		} finally {
 			if (reader != null) {
 				try {
@@ -77,6 +78,7 @@ public class IoUtil {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					logger.error("关闭BufferedReader异常");
 				}
 			}
 			if (writer != null) {
@@ -85,28 +87,28 @@ public class IoUtil {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					logger.error("关闭BufferedWriter异常");
 				}
 			}
 		}
 	}
 
-	
-	public static void conversionFileLastLine(String readfilepath, String writefilepath,long lines) throws IOException{
-		  
-        File writefile = new File(writefilepath);  
-        File readfile = new File(readfilepath);
-        int counter = 1;  
+	/*
+	 * 将日志文件的最后指定行数转格式存到新文档并写入数据库
+	 */
+	public static void conversionFileLastLine(String readfilepath, String writefilepath, long lines)
+			throws IOException {
+
+		File writefile = new File(writefilepath);
+		File readfile = new File(readfilepath);
+		int counter = 1;
 		StringBuffer sb = new StringBuffer();
-        //构造方法 ReversedLinesFileReader(final File file, final int blockSize, final String encoding)   
-        ReversedLinesFileReader object = new ReversedLinesFileReader(readfile,4096,"UTF-8");
+		ReversedLinesFileReader object = new ReversedLinesFileReader(readfile, 4096, "UTF-8");
 		BufferedWriter writer = null;
 		try {
-	        while (counter <= lines) {  
-		           String line = object.readLine();//读取下一行  
-				// 先将日志用,分割
-//		           if (null==line) {
-//					line=object.readLine();
-//				}
+			while (counter <= lines) {
+				// 读取下一行
+				String line = object.readLine();
 				String[] strings = line.split(";");
 				// 分割后取第四个元素得到[27/Dec/2017:16:10:32 +0800]
 				String calldatestr = strings[3];
@@ -122,37 +124,39 @@ public class IoUtil {
 				SimpleDateFormat sdfnew = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				try {
 					calldate = sdf.parse(calldatestring);
-					// 转换得到
+					// 转换得到newdatestr格式为yyyy-MM-dd HH:mm:ss
 					newdatestr = sdfnew.format(calldate);
 
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				// 获取第一个数字，并加1
 
+				}
+				// 将各字符串以分号;连接,最后加上换行符
 				sb.append(strings[0]).append(";").append(strings[1]).append(";").append(strings[2]).append(";")
 						.append("\"").append(newdatestr).append("\"").append(";").append(strings[4]).append("\r\n");
-	            counter++;  
-	        }  
-	        try {
-		        writer = new BufferedWriter(new FileWriter(writefile));
+				counter++;
+			}
+			try {
+				writer = new BufferedWriter(new FileWriter(writefile));
 				writer.write(sb.toString());
 			} catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
+				logger.error("读取tomcat日志出错");
 			}
 
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-		}finally {
+		} finally {
 			if (object != null) {
 				try {
 					object.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					logger.error("关闭BufferedReader异常");
 				}
 			}
 			if (writer != null) {
@@ -161,26 +165,21 @@ public class IoUtil {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					logger.error("关闭BufferedWriter异常");
 				}
 			}
 		}
-        object.close();
+		object.close();
 	}
-//	public static void main(String[] args) throws IOException {
-//		long startat = System.currentTimeMillis();
-//		conversionFileLastLine("F:/test.txt", "F:/newtest.txt",10);
-//		long endat = System.currentTimeMillis();
-//		long time = endat - startat;
-//		System.out.println("读取转换耗时"+ time);
-//	}
-	public static int countLines(String filename) throws IOException {    
-	    LineNumberReader reader  = new LineNumberReader(new FileReader(filename));    
-	int cnt = 0;    
-	String lineRead = "";    
-	while ((lineRead = reader.readLine()) != null) {}    
-	    
-	cnt = reader.getLineNumber();     
-	reader.close();    
-	return cnt;    
-	}  
+
+	public static int countLines(String filename) throws IOException {
+		LineNumberReader reader = new LineNumberReader(new FileReader(filename));
+		int cnt = 0;
+		String lineRead = "";
+		while ((lineRead = reader.readLine()) != null) {
+		}
+		cnt = reader.getLineNumber();
+		reader.close();
+		return cnt;
+	}
 }
