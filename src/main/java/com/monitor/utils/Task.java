@@ -32,43 +32,38 @@ public class Task {
 	@Autowired
 	private TomcatlogService tomcatlogService;
 
-	@Scheduled(cron = "0 0/5  *  * * ? ") // 每5分钟秒执行一次
+	@Scheduled(cron = "0 0/5  *  * * ? ") // 每5分钟执行一次
 	public void scheduler() {
 		SimpleDateFormat sfDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-		String date = sfDateFormat.format(new Date());
-		logger.info(date + "开始执行定时转存tomcat日志任务");
+		String start_date = sfDateFormat.format(new Date());
+		logger.info(start_date + "开始执行定时转存tomcat日志任务");
 		if (lines == 0) {
 			lines = 1000;
 		}
 			SimpleDateFormat sfDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
-			String date1 = sfDateFormat1.format(new Date());
-			String readfilepath = logfilepath+"/localhost_access_log." + date1 + ".txt";
-	logger.info("get readfilepath is "+readfilepath);
-			SimpleDateFormat sfDateFormat2 = new SimpleDateFormat("yyyyMMddhhmmss");
-			String date2 = sfDateFormat1.format(new Date());
-			String writefilepath = targetfilepath+"/accesslog." + date1 + ".txt";
-			logger.info("get writefilepath is "+writefilepath);
+			String date = sfDateFormat1.format(new Date());
+			String readfilepath = logfilepath+"/localhost_access_log." + date + ".txt";
+			String writefilepath = targetfilepath+"/accesslog." + date + ".txt";
 		int totallines = 0;
 		try {
 			totallines = IoUtil.countLines(readfilepath);
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			logger.error("");
+			logger.error("统计日志行数异常");
 		}
 		if (totallines < lines) {
 			lines = totallines;
 		}
 		try {
-			List<Tomcatlog> list = tomcatlogService.testget();
-			int size = list.size();
-			logger.info("info get size is "+size);
-			logger.debug("debug get size is "+size);
-			logger.warn("warn get size is "+size);
 			logger.info("get lines is "+ lines);
 			logger.info("get logfilepath is "+ logfilepath);
 			logger.info("get targetfilepath is "+ targetfilepath);
+			logger.info("get readfilepath is "+ readfilepath);
+			logger.info("get writefilepath is "+ writefilepath);
+			//先将日志转格式写入文档
 			long time = tomcatlogService.copytomcatloglastline(readfilepath, writefilepath, lines);
 			Thread.sleep(2000);
+			//在通过sql将文档写入数据库
 			tomcatlogService.copylog(writefilepath);
 			logger.info("转存日志耗时" + time);
 		} catch (Exception e) {
