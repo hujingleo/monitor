@@ -14,10 +14,10 @@ import java.util.Locale;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 public class IoUtil {
 	private static final Logger logger = LoggerFactory.getLogger(IoUtil.class);
-
 	/*
 	 * 将整个日志文件转格式存到新文档并写入数据库
 	 */
