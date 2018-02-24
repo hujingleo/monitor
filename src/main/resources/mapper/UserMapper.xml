@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.monitor.dao.UserDao">
+    <resultMap id="BaseResultMap" type="com.monitor.model.User">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+    </resultMap>
+
+    <select id="selectByUsername" resultType="com.monitor.model.User">
+        select
+        *
+        from t_monitor_user
+        where username=#{username}
+    </select>
+
+    <insert id="insertUser" parameterType="com.monitor.model.User">
+		insert into t_monitor_user(
+		username
+		,password
+		,user_type
+		,created_date
+		)
+		values(
+		#{username}
+		,#{password}
+		,#{user_type}
+		,#{created_date}
+		)
+    </insert>
+
+</mapper>

@@ -1,11 +1,11 @@
 package com.monitor.controller;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.monitor.service.TomcatlogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.monitor.model.Tomcatlog;
-import com.monitor.service.TomcatlogService;
 import com.monitor.utils.IoUtil;
 import com.monitor.utils.SimpleNetObject;
 

@@ -75,6 +75,16 @@ public class SimpleNetObject {
 	public void setExtraData(Object extraData) {
 		this.extraData = extraData;
 	}
+
+	public String getJsessionid() {
+		return jsessionid;
+	}
+
+	public void setJsessionid(String jsessionid) {
+		this.jsessionid = jsessionid;
+	}
+
+	private String jsessionid;
 	public SimpleNetObject(){}
 	public SimpleNetObject(String successMessage){
 		this.message=successMessage;		
@@ -83,16 +93,4 @@ public class SimpleNetObject {
 		this.result=result;
 		this.message=message;
 	}
-	
-//	public static void main(String[] args){
-//		long start=System.currentTimeMillis();
-//		for(int i=0;i<1000000;i++){
-//			SimpleNetObject sno=new SimpleNetObject();
-//			
-//		}
-//		long end=System.currentTimeMillis();
-//		System.out.println("耗时"+(end-start));
-//		
-//	}
-	
 }
